@@ -3,7 +3,8 @@ const {
   getTasks,
   createTask,
   updateTask,
-  deleteTask
+  deleteTask,
+  rateTask
 } = require('../controllers/taskController');
 
 const router = express.Router();
