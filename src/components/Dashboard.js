@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import teamMembers from '../UsersData';
 import './Dashboard.css'
 import { NavLink } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
@@ -27,11 +26,10 @@ function Dashboard(prop)
   const[highper,setHighper] = useState(0);
   
   useEffect(() => {
-   
       const totalCount = tasks.length;
       const pendingCount = tasks.filter(task => task.status === 'pending').length;
-      const inProgressCount = tasks.filter(task => task.status === 'In Progress').length;
-      const completedCount = tasks.filter(task => task.status === 'completed').length;
+      const inProgressCount = tasks.filter(task => task.status === 'in Progress').length;
+      const completedCount = tasks.filter(task => task.status === 'Completed').length;
       const lowCount = tasks.filter(task => task.priority === 'Low').length;
       const medCount = tasks.filter(task => task.priority === 'Medium').length;
       const highCount = tasks.filter(task => task.priority === 'High').length;
@@ -48,12 +46,12 @@ function Dashboard(prop)
       setLowper(lowper);
       setMedper(medper);
       setHighper(highper);
-  },[tasks]);
+  },[tasks,]);
   const border_style = {
     background: `conic-gradient(
       #673ab7 0% ${lowper}%,
       #03a9f4 ${lowper}% ${lowper + medper}%,
-      #009688 ${lowper + medper}% 100%
+      #009688 ${lowper + medper}%  ${ highper}%
     )`
   };
   
@@ -84,21 +82,17 @@ function Dashboard(prop)
     height: ${high}%;
     background: #f44336;
   }`;
-  console.log("Cuser", Cuser);
-  // console.log("Cuser.token", token);
+
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        // console.log("Welcome to the dashboard");
         const response = await axios.get('http://localhost:5000/api/tasks', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         setTasks(response.data);
-        console.log("Tasks fetched:", response.data);
         
-        console.log("Tasks fetched 2:", tasks);
       } catch (error) {
         console.error('Failed to fetch tasks:', error);
         setTasks([]);
@@ -141,7 +135,7 @@ function Dashboard(prop)
         <div className='task_dist'>
             <h1>task distribution</h1>
             <div className='P_C'>
-                <div className='circle_border' style={border_style}>
+                <div className='circle_border' style={ total>0?border_style:{backgroundColor:"#ddd"}}>
             <div className='circle'>
 
             </div></div>

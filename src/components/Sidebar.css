@@ -7,9 +7,10 @@
 .side_bar .img
 {
     display: flex;
-    justify-content: center;
+    /* justify-content: center; */
     align-items: center;
     margin-top: 50px;
+    margin-left: 40px;
 
 }
 .side_bar .img img
@@ -26,7 +27,7 @@
     font-family: cursive;
     text-transform: capitalize;
     margin-bottom: 5px !important;
-    margin-left: 25%;
+    margin-left: 30px;
 }
 .side_bar .email
 {

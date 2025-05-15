@@ -18,15 +18,15 @@ function Task(prop)
     const[color,setcolor]=useState();
     useEffect(()=>
     {
-        console.log("in function");
+        
         if(prop.t.status==='Completed')
             setcolor('high')
-        else if(prop.t.status==='In Progress')
+        else if(prop.t.status==='in Progress')
             setcolor('medium')
-        if(prop.t.status==='Pending')
+        if(prop.t.status==='pending')
             setcolor('low')
-        console.log("color"+prop.t.status);
-    },[prop.t.status])
+       
+    },[])
    const handleDelete=async()=>
     {
         try {
@@ -35,7 +35,7 @@ function Task(prop)
                 Authorization: `Bearer ${token}`, // if using JWT auth
               },
             });
-      
+    
             alert(response.data.message);
                 navigate('/task/all');
         
@@ -46,18 +46,11 @@ function Task(prop)
         
     return(
         <>
-        {/* {console.log("prop"+prop.t)} */}
+      
         <div className="task">
-        <div className={open?"delete_page":"delete_page_hidden"}>
-            <Alert severity="error">Are you sure you want to delete this task?</Alert>
-           <div className='buttons'>
-           <button onClick={()=>{handleDelete();setOpen(false);}}>Delete</button>
-           <button onClick={()=>setOpen(false)}>Cancel</button>
-           </div>
-        </div>
+      
             <div className="edit_delet">
                 <button className="edit" onClick={()=>navigate(`/edit/${prop.t._id}`)}><i class="fa-solid fa-pen-to-square"></i></button>
-                <button className="delete" onClick={()=>setOpen(true)}><i class="fa-solid fa-trash"></i></button>
             </div>
             <div className="status">
                 <p className={prop.t.status}> {prop.t.status}</p>
@@ -76,25 +69,27 @@ function Task(prop)
                 
             </div>
             <div className="progress">
-            <span style={{ width: `${width1 * 100}%`}} className={color}></span>
+            <span style={{ width: `${prop.t.TaskDone/prop.t.totalTasks * 100}%`}} className={color}></span>
                  </div>
                  <div className="dates">
                     <div className="start_date">
                         <p>start Date</p>
-                        <p>{prop.t.createdAt.split('T')[0]}</p>
+                        <p>{prop.t.createdAt&&prop.t.createdAt.split('T')[0]}</p>
                     </div>
                     <div className="end_date">
                         <p>Due Date</p>
-                        <p>{prop.t.deadline.split('T')[0]}</p>
+                        <p>{prop.t.deadline&&prop.t.deadline.split('T')[0]}</p>
                     </div>
                  </div>
                  <div className="teams">
-                    {prop.t.assignee?[prop.t.assignee].map((x)=>
+                    {prop.t.assignee?prop.t.assignee.map((x)=>
                     {
                         return(
-                            <div>
-                                <p>{x.name}</p>
-                                {/* <img src={x}/> */}
+                            <div className="team_member">
+                            <div className="team_member_info">
+                                <p>{x.name} , </p>
+                                <img src={x.profileImage||"https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"}/>
+                            </div>
                             </div>
                         )
                     }):<p>No assignee</p>}

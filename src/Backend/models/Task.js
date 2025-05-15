@@ -6,6 +6,11 @@ const taskSchema = new mongoose.Schema({
     required: true
   },
   description: String,
+    deadline: Date,
+    assignee: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   status: {
     type: String,
     default: 'Pending'
@@ -15,15 +20,7 @@ const taskSchema = new mongoose.Schema({
     default: 'Medium'
   },
   startDate: Date,
-  deadline: Date,
-  assignee: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  },
+
   TaskDone: {
     type: Number,
     default: 0
@@ -31,6 +28,14 @@ const taskSchema = new mongoose.Schema({
   totalTasks: {
     type: Number,
     default: 0
+  },
+  Checklist: [{
+    type: String,
+    default: []
+  }],
+    createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   },
   ratingGiven: {
     type: Number

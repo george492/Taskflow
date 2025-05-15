@@ -140,4 +140,15 @@
       margin-top: 10px;
     }
   }
-  
+  .error_one_hidden{
+    display: none;
+  }
+  .error_one{
+    display: block;
+  }
+  .error_neg_hidden{
+    display: none;
+  }
+  .delete_page{
+    display: block;
+  }

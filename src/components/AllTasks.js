@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import TaskData from "../Taskdata";
+
 import Task from "./Task";
 import { useEffect, useState } from "react";
 import All__Tasks from "./TasksRecoil";
@@ -15,8 +15,10 @@ function AllTasks()
     const[TaskDat,setTaskData]=useRecoilState(All__Tasks);
     const [token, setToken] = useRecoilState(User_Token);
     const [Cuser, setCuser] = useRecoilState(CUser);
-    console.log("TaskData" ,TaskDat );
+    // console.log("TaskData" ,TaskDat );
     useEffect(() => {
+      // console.log("Cuser",Cuser);
+      // console.log("token",token);
         const fetchTasks = async () => {
           try {
             // console.log("Welcome to the dashboard");
@@ -26,7 +28,7 @@ function AllTasks()
               },
             });
             setTaskData(response.data);
-            console.log("Tasks fetched:", response.data);
+            // console.log("Tasks fetched:", response.data);
             
             // console.log("Tasks fetched 2:", tasks);
           } catch (error) {
@@ -38,7 +40,7 @@ function AllTasks()
         if (Cuser && token) {
           fetchTasks();
         }
-      }, []);
+      }, [Cuser, token]);
     useEffect(()=>
     {
         if(param.status==='all')
@@ -46,7 +48,7 @@ function AllTasks()
         else{     
               const  Taskat=TaskDat.filter(p=>p.status===param.status);
               settasks(Taskat);}
-    },[param.status,TaskDat])
+    },[param,TaskDat])
 //    TaskData.filter(p=>p.status===param.status);
     return(
         <div className="alltasks">

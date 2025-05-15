@@ -6,7 +6,7 @@ function Teammember(prop)
         <div className="member">
             <div className="p_info">
                 <div className="image">
-                    <img src={prop.m.avatar}/>
+                    <img src={prop.m.profileImage||"https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"}/>
                 </div>
                 <div className="p_text">
                     <p>{prop.m.name}</p>
@@ -15,15 +15,15 @@ function Teammember(prop)
             </div>
             <div className="p_tasks">
             <div className="pending">
-                    <p>{prop.m.tasks.pending}</p>
+                    <p>{prop.m.pending}</p>
                     <p>pending</p>
                 </div>
                 <div className="Progress">
-                    <p>{prop.m.tasks.inProgress}</p>
+                    <p>{prop.m.inprogress}</p>
                     <p>in progress</p>
                 </div>
                 <div className="pending">
-                    <p>{prop.m.tasks.completed}</p>
+                    <p>{prop.m.complete}</p>
                     <p>Completed</p>
                 </div>
               

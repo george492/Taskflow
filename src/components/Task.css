@@ -266,3 +266,10 @@
     display: flex;
     justify-content: space-between;
 }
+.team_member_info
+{
+display: flex;
+flex-direction: column-reverse;
+align-items: center;
+justify-self: unset;
+}

@@ -2,14 +2,10 @@ import logo from './logo.svg';
 import './App.css';
 import Managetask from './components/Managetask';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import AllTasks from './components/AllTasks';
 import Team from './components/Team';
 import Dashboard from './components/Dashboard';
-import teamMembers from './UsersData';
 import Sidebar from './components/Sidebar';
 import CreateTask from './components/CreateTask';
-import UserList from './components/UserList';
-import Homepage from './components/Homepage';
 import React, { useEffect, useState } from 'react';
 import {
   RecoilRoot,
@@ -20,6 +16,9 @@ import {
 } from 'recoil';
 import Logout from './components/Logout';
 import UpdateTask from './components/UpdateTask';
+import Login from './components/pages/Login';
+import Register from './components/pages/Register';
+import Profile from './components/pages/Profile';
 // import CreateTask from './components/CreateTask';
 // function AppLayout({  }) {
 //   return (
@@ -64,8 +63,12 @@ function App() {
     <Route path="task" element={<Navigate to="/task/all" replace />} />
     <Route path="team" element={<Team />} />
     <Route path="dashboard" element={<Dashboard />} />
-    
-      <Route path="/login" element={<Homepage />} />
+    <Route path="/login" element={<Login/>} />
+    <Route path="/" element={<Navigate to="/login" replace />} />
+    <Route path="/register" element={<Register/>} />
+    <Route path="/profile" element={<Profile/>} />
+
+      {/* <Route path="/login" element={<Homepage />} /> */}
       <Route path="/createtask" element={<CreateTask />} />
       <Route path="/logout" element={<Logout />} />
 
