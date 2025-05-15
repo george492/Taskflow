@@ -1,0 +1,268 @@
+.task
+{
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    margin-top: 10px;
+    position: relative;
+}
+.task::before
+{
+    content: "";
+    position: absolute;
+    left: -3px;
+    width: 5px;
+    height: 60%;
+    top: 20%;
+    background-color: #ff9d7e;
+}
+.task .status
+{
+    display: flex;
+    align-items: center;
+
+}
+.pending
+{
+    background-color: #d1c9f1 !important;
+    color: #875ec9 !important;
+}
+.task .status p{
+     padding: 4px 15px;
+    border-radius: 10px;
+    margin-right: 30px;
+   text-transform: capitalize;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+ .Progress
+{
+    background-color: #E9F0F5 !important;
+    color: #009688 !important;
+}
+ .Completed
+{
+    background-color: #e8f8c1 !important;
+    
+    color: #99c057 !important;
+}
+.task .status .High
+{
+    color: #d45572;
+    background-color: #fdebef;
+}
+.low
+{
+    background-color: #d45572 !important;
+   
+}
+.task .status .Medium
+{
+    background-color: #ffe39a;
+    color: #d4a643;
+}
+ .medium
+{
+    
+    background-color: #d4a643 !important;
+}
+.task .status .Low
+{
+    background-color: #e2fff5;
+    color: #62b196;
+}
+.high
+{
+    background-color: #2196f3 !important;
+  border-radius: 5px;
+}
+.task .task_name h2
+{
+    font-size: 20px;
+    margin-bottom: 0;
+}
+.task .task_name p
+{
+    color:#d6d6d7;
+    margin-top: 5px;
+    line-height: 30px;
+}
+.task .task_progress .task_done
+{
+    
+    font-weight: 500;
+    text-transform: capitalize;
+    
+}
+.task .task_progress .progress
+{
+    width: 95%;
+    height: 10px;
+    border-radius: 5px;
+    background-color: #ddd;
+    margin-left: 2%;
+}
+.task .task_progress .progress span
+{
+    display: block;
+    /* background-color: #99c057; */
+    height:10px;
+    /* z-index: 3; */
+}
+.task .dates
+{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+.task .dates p:nth-child(1)
+{
+    margin: 0;  
+    color: #d6d6d7;
+   text-transform: capitalize;
+}
+.task .dates p:nth-child(2)
+{
+    font-weight: 600;
+    /* margin-bottom: 5px; */
+   margin-top: 5px;
+    font-size: 17px;
+}
+.task .teams
+{
+    display:flex;
+    
+}
+.task .teams div img
+{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: contain;
+    border: 2px solid white;
+    outline: white;
+   
+}
+.task .teams div:not(:nth-child(1))  img
+{
+    transform: translateX(-10px);
+}
+.alltasks
+{
+    background-color: #f2f2f2;
+    display: grid;
+    grid-template-columns: repeat(2,47%);
+    row-gap: 30px;
+    width: 90%;
+    margin-left: 5%;
+    justify-content: space-between;
+    padding: 1px;
+}
+.managetask
+{
+    background-color: #f2f2f2;
+}
+@media(max-width:769px)
+{
+    .alltasks
+    {
+        grid-template-columns: 80%;
+        justify-content: center;
+    }
+    .managetask header .nav
+    {
+        width: 70%;
+    }
+}
+@media(max-width:427px)
+{
+    .alltasks
+    {
+        grid-template-columns: 90%;
+        justify-content: center;
+    }
+   
+}
+@media(max-width:376px)
+{
+    .alltasks
+    {
+        grid-template-columns: 97%;
+        width: 95%;
+        margin-left: 2%;
+        justify-content: center;
+    }
+    .task .task_name h2
+    {
+        font-size: 18px;
+    }
+    .task .task_name p,
+    .task .dates p:nth-child(2),
+    .task .dates p:nth-child(1),
+    .task_done p,
+    .task .status p
+    {
+        font-size: 14px;
+    }
+
+   
+}
+@media(max-width:321px)
+{
+    .alltasks
+    {
+        grid-template-columns: 99%;
+        width: 100%;
+        margin-left: 0%;
+        justify-content: center;
+    }
+   
+}
+.edit_delet
+{
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    width: 80%;
+    margin-left: 10%;
+    margin-top: 20px;
+}
+.edit_delet button
+{
+    outline: none;
+    border: none;
+    margin-right: 10px;
+    background-color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+.edit_delet button:nth-child(2)
+{
+    color: red;
+}
+.edit_delet button:nth-child(2):hover
+{
+    color: #c10e0e;
+}
+.edit_delet button:nth-child(1)
+{
+    color: green;
+}
+.edit_delet button:nth-child(1):hover
+{
+    color: #008000;
+}
+.delete_page
+{
+    display: block;
+}
+.delete_page_hidden
+{
+    display: none;
+}
+.delete_page .buttons
+{
+    display: flex;
+    justify-content: space-between;
+}

@@ -1,0 +1,95 @@
+.managetask
+{
+    background-color: #fcfcfc;
+    padding: 1px;
+}
+.managetask header
+{
+    justify-content: space-between;
+    width: 100%;
+}
+.managetask header h1
+{
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.managetask header .task_info > a
+{
+    display: flex;
+    align-items: center;
+    text-transform: capitalize;
+    cursor: pointer;
+    text-decoration: none;
+    color: black;
+}
+.managetask header .task_info > a:hover
+{
+    color: #5680be;
+}
+.managetask header .task_info > a span
+{
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ddd;
+    font-size: 14px;
+    margin-left: 10px;
+    color: black;
+
+}
+.managetask header .task_info .Active
+{
+    color: #2e7bed !important;
+    position: relative;
+}
+.managetask header .task_info .Active::after
+{
+    width: 100%;
+    height: 2px;
+    background-color: #2e7bed;
+    position: absolute;
+    content: '';
+    left: 0;
+    bottom: 0px;
+    margin-bottom: 0;
+}
+.navbar-toggler:focus
+{
+    box-shadow: none !important;
+}
+@media(max-width:769px)
+{
+    .managetask header .task_info .Active::after 
+    {
+        width: 15%;
+        left: 42%;
+    }
+    .managetask header .task_info > a
+    {
+        justify-content: center;
+    }
+}
+.managetask header .task_info .Active span
+{
+    background-color:#2e7bed !important ;
+    color: white !important;
+}
+.managetask header .task_info p
+{
+    text-transform: capitalize;
+    font-size: 18px;
+    margin-bottom: 0;
+}
+.navbar-expand-lg .navbar-collapse
+{
+    justify-content: end !important;
+}
+.navbar-expand-lg .navbar-nav .nav-link
+{
+    margin-left: 10px;
+}
+
