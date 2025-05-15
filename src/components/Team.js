@@ -1,31 +1,34 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Teammember from "./Teammemeber";
+import { useRecoilState } from "recoil";
+import User_Token from "./Tokaerecoil";
 
 function Team() {
   const [users, setUsers] = useState([]);
   const [tasks, setTasks] = useState([]);
-  const token = localStorage.getItem("token");
-
+ // const token = localStorage.getItem("token");
+  const [token,setttoken]=useRecoilState(User_Token);
+  
   useEffect(() => {
-    // Fetch all users
-    axios
-      .get("http://localhost:5000/api/users", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => setUsers(res.data))
-      .catch((err) => console.error("Users fetch error:", err));
+  const fetchUsers = async () => {
+    try {
+      // console.log("Welcome to the dashboard");
+      const response = await axios .get("http://localhost:5000/api/auth/users");
 
-    // Fetch all tasks created by the logged-in user
-    axios
-      .get("http://localhost:5000/api/tasks", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => setTasks(res.data))
-      .catch((err) => console.error("Tasks fetch error:", err));
-  }, [token]);
+      setUsers(response.data)
+      console.log("Users fetched:", response.data);
+      
+      console.log("Users fetched 2:", users);
+    } catch (error) {
+      console.error('Failed to fetch Users:', error);
+      setUsers([]);
+    }
+  };
 
-  // Count tasks by assignee
+}, [ ]);
+  
+    // Count tasks by assignee
   const assigneeStats = {};
 
   tasks.forEach((task) => {
