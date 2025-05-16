@@ -104,7 +104,14 @@ const Profile = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 className="profile-input"
               />
-
+        <label>ID</label>
+              <input
+                type="text"
+                value={user._id}
+                disabled={!editMode}
+               
+                className="profile-input"
+              />
             </div>
           </div>
         </div>}

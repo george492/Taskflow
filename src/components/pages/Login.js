@@ -76,7 +76,7 @@ useEffect(() => {
           <form onSubmit={handleLogin} className="profile-info">
             <input
               type="text"
-              placeholder="Full Name"
+              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

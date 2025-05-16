@@ -3,10 +3,34 @@ const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
 const cors = require('cors');
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 const app = express();
 const authRoutes = require('./src/Backend/routes/authRoutes');
 const taskRoutes = require('./src/Backend/routes/taskRoutes');
 const authMiddleware = require('./src/Backend/middlewares/authMiddleware');
+
+// Swagger configuration
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Taskflow API Documentation',
+      version: '1.0.0',
+      description: 'API documentation for Taskflow project',
+    },
+    servers: [
+      {
+        url: `http://localhost:${process.env.PORT || 5000}`,
+        description: 'Development server',
+      },
+    ],
+  },
+  apis: ['./src/Backend/routes/*.js'], 
+};
+
+const swaggerDocs = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use(express.json());
 

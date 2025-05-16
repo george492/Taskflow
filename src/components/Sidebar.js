@@ -47,7 +47,7 @@ function Sidebar()
     useEffect(()=>{
       
         const pathname = location.pathname;
-        if (pathname.includes('login')) {
+        if (pathname.includes('login')||pathname.includes('register')) {
             setActive(false);
           }
           else{

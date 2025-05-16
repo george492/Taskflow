@@ -94,7 +94,7 @@ useEffect(()=>
         title:task.title,
         description:task.description,
         priority:task.priority,
-        status:task.TaskDone===task.totalTasks?"Completed":task.status,
+        status:parseFloat(task.TaskDone)===parseFloat(task.totalTasks)?"Completed":task.status,
         TaskDone:task.TaskDone,
         totalTasks:task.totalTasks,
         Checklist:task.checklist,
