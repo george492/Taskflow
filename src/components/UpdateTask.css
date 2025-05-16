@@ -140,4 +140,75 @@
       margin-top: 10px;
     }
   }
-  
+  .error_one_hidden{
+    display: none;
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
+  .error_one{
+    margin-top: 10px;
+    display: block;
+    margin-bottom: 0;
+  }
+  .error_neg_hidden{
+    display: none;
+  }
+  .delete_page{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    margin-left: 25%;
+    margin-bottom: 40px;
+  }
+  .delete_page_hidden{
+    display: none;
+  }
+  .delete_btn{
+    outline: none;
+    border: none;
+    background-color: red;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 8px 15px;
+  }
+  .cancel_btn{
+    background-color: #007bff;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 8px 15px;
+    outline: none;
+    border: none;
+    /* margin-left: 10px; */
+  }
+  .cancel_btn:hover{
+    background-color: #0056b3;
+  }
+  .delete_btn:hover{
+    background-color: #b30000;
+  }
+  .delete_btn_section
+    {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-top: 10px;
+    }
+@media(max-width:426px)
+{
+  .delete_page
+  {
+    width: 90%;
+    margin-left: 5%;
+  }
+}
+@media(max-width:374px)
+{
+  .delete_page
+  {
+    width: 100%;
+    margin-left: 0%;
+  }
+}
+

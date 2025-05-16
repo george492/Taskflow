@@ -161,4 +161,15 @@
     border-radius: 8px;
     cursor: pointer;
   }
+  .error-login {
+    /* position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1000; */
+    color: red;
+  }
+  .error-login-hidden {
+    display: none;
+  }
+  
   

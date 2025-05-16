@@ -43,9 +43,9 @@
 }
  .Completed
 {
-    background-color: #e8f8c1 !important;
+    background-color: #95ce533b !important;
     
-    color: #99c057 !important;
+    color:#8BC34A !important;
 }
 .task .status .High
 {
@@ -265,4 +265,11 @@
 {
     display: flex;
     justify-content: space-between;
+}
+.team_member_info
+{
+display: flex;
+flex-direction: column-reverse;
+align-items: center;
+justify-self: unset;
 }

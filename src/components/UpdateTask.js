@@ -5,74 +5,88 @@ import { useRecoilState } from 'recoil';
 import All__Tasks from './TasksRecoil';
 import User_Token from './Tokaerecoil';
 import axios from 'axios';
+// import { Alert } from 'bootstrap';
+import Alert from '@mui/material/Alert';
 function UpdateTask() {
   const navigate=useNavigate();
   const param=useParams();
   const[tasks,settasks]=useRecoilState(All__Tasks);
   const[task,setTask]=useState(tasks.find(t=>t._id===param.id));
-  const [token, setToken] = useRecoilState(User_Token
-  );
+  const [token, setToken] = useRecoilState(User_Token);
+  const [todos, setTodos] = useState([]);
+  const [newTodo, setNewTodo] = useState('');
+  const [open, setOpen] = useState(false);
+  const[error_one,setError_one]=useState(false);
+  const[error_neg,setError_neg]=useState(false);
 //  task.value={};
 useEffect(()=>
 {
+  setTask(tasks.find(t=>t._id===localStorage.getItem('taskId')));
+},[])
+// useEffect(()=>
+// {
+//   setTask(tasks.find(t=>t._id===param.id));
+// },[param.id])
 
-  setTask(tasks.find(t=>t._id===param.id));
-    console.log("attasks",task)
-},[param.id])
-  // const[task,setTask]=useState(tasks.find(t=>t._id===param.id));
-  // const [task,setTask]=useState([]);
-  // const [taskTitle, setTaskTitle] = useState('Create App UI');
-  // const [description, setDescription] = useState('Develop a dynamic product catalog with filtering and sorting features. Ensure the catalog is mobile-responsive and offers seamless navigation. Focus on improving performance and minimizing page load times.');
-  // const [priority, setPriority] = useState('Medium');
-  // const [dueDate, setDueDate] = useState('2025-04-05');
-  // const [assignedUsers, setAssignedUsers] = useState(['User1', 'User2']);
-  // const [todos, setTodos] = useState(['Create Product Card', 'Develop Category Filter UI']);
-  // const [attachments, setAttachments] = useState(['react.dev']);
-  // const [newTodo, setNewTodo] = useState('');
-  // const [newAttachment, setNewAttachment] = useState('');
 
-  // function handleAddTodo() {
-  //   if (newTodo.trim() !== '') {
-  //     setTodos([...todos, newTodo]);
-  //     setNewTodo('');
-  //   }
-  // }
+  function handleAddTodo() {
+    if (newTodo.trim() !== '') {
+      setTodos([...todos, newTodo]);
+      setNewTodo('');
+    }
+  }
 
-  // function handleDeleteTodo(index) {
-  //   const updatedTodos = [...todos];
-  //   updatedTodos.splice(index, 1);
-  //   setTodos(updatedTodos);
-  // }
-
-  // function handleAddAttachment() {
-  //   if (newAttachment.trim() !== '') {
-  //     setAttachments([...attachments, newAttachment]);
-  //     setNewAttachment('');
-  //   }
-  // }
-
-  // function handleDeleteAttachment(index) {
-  //   const updatedAttachments = [...attachments];
-  //   updatedAttachments.splice(index, 1);
-  //   setAttachments(updatedAttachments);
-  // }
-
-  // function handleDeleteTask() {
-  //   // You can add your delete logic here
-  //   alert('Task Deleted');
-  // }
+  function handleDeleteTodo(index) {
+    const updatedTodos = [...todos];
+    updatedTodos.splice(index, 1);
+    setTodos(updatedTodos);
+  }
+  const handleDelete=async()=>
+    {
+        try {
+            const response = await axios.delete(`http://localhost:5000/api/tasks/${task._id}`, {
+              headers: {
+                Authorization: `Bearer ${token}`, // if using JWT auth
+              },
+            });
+            alert(response.data.message);
+                navigate('/task/all');
+        
+          } catch (error) {
+            alert(error.response?.data?.message || 'Failed to delete task');
+          }
+        };
+        
 
   const handleUpdate = async () => {
+    if(task.TaskDone>task.totalTasks)
+    {
+     setError_one(true);
+     setTimeout(()=>
+     {
+      setError_one(false);
+     },3000);
+     return;
+    }
+    else if(task.TaskDone<0)
+    {
+      setError_neg(true);
+      setTimeout(()=>
+      {
+        setError_neg(false);
+      },3000);
+      return;
+    }
+    console.log("true or false ",task.TaskDone===task.totalTasks);
     try {
-      console.log("task",task);
       const updatedTask = {
         title:task.title,
         description:task.description,
         priority:task.priority,
-        status:task.status,
-        TaskDone:task.doneTasks,
+        status:task.TaskDone===task.totalTasks?"Completed":task.status,
+        TaskDone:task.TaskDone,
         totalTasks:task.totalTasks,
-        
+        Checklist:task.checklist,
         deadline:task.deadline,
         // add other fields if needed
       };
@@ -82,9 +96,8 @@ useEffect(()=>
           Authorization: `Bearer ${token}`, // replace with your actual token
         },
       });
-
-      alert('Task updated successfully');
-      navigate('/task/all'); // send updated task back to parent
+      setOpen(true);
+      navigate('/task/all');
     } catch (error) {
       alert(error.response?.data?.message || 'Failed to update task');
     }
@@ -93,10 +106,15 @@ useEffect(()=>
    return React.createElement(
     'div',
     { className: 'update-task-container' },
-
+    React.createElement('div',{className:open?"delete_page":"delete_page_hidden"},
+      React.createElement(Alert,{severity:"warning"},"Are you sure you want to Delete the task?"),
+      React.createElement('div',{className:"delete_btn_section"},
+      React.createElement('button',{className:"delete_btn",onClick:handleDelete},"Delete"),
+      React.createElement('button',{className:"cancel_btn",onClick:()=>setOpen(false)},"Cancel"))
+    ) ,
     React.createElement('div', { className: 'header-section' },
       React.createElement('h2', null, 'Update Task'),
-      React.createElement('button', { className: 'delete-btn',  }, '🗑️ Delete')
+      React.createElement('button', { className: 'delete-btn', onClick:()=>setOpen(true) }, '🗑️ Delete')
     ),
 
     React.createElement('label', { className: 'label' }, 'Task Title'),
@@ -155,22 +173,29 @@ useEffect(()=>
     //     )
       )
     ),
+    React.createElement('div',{className:error_one?"error_one":"error_one_hidden"},
+      React.createElement(Alert,{severity:"error"},"Task Done cannot be greater than total tasks")
+    ),
+    React.createElement('div',{className:error_neg?"error_neg":"error_neg_hidden"},
+      React.createElement(Alert,{severity:"error"},"Task Done cannot be negative")
+    ),
     React.createElement('div',{className:'row'},
     React.createElement('div', { className: 'col' },
-    React.createElement('label', { className: 'label' }, 'Total Tasks'),
+    React.createElement('label', { className: 'label' }, 'Done Tasks'),
     React.createElement('input', {
       type: 'number',
       className: 'input',
-      value: task.totalTasks,
-      onChange: (e) => setTask({...task,totalTasks:e.target.value}),
+      value: task.TaskDone,
+      onChange: (e) => setTask({...task,TaskDone:e.target.value}),
     })),
     React.createElement('div', { className: 'col' },
     React.createElement('label', { className: 'label' }, 'Total Tasks'),
     React.createElement('input', {
       type: 'number',
       className: 'input',
-      value: task.doneTasks,
-      onChange: (e) => setTask({...task,doneTasks:e.target.value}),
+      value: task.totalTasks,
+      readOnly:true,
+      onChange: (e) => setTask({...task,totalTasks:e.target.value}),
     }))),
     React.createElement('div',{className:'row'}),
     React.createElement('div', { className: 'col' },
@@ -178,50 +203,58 @@ useEffect(()=>
       React.createElement('input', {
         type: 'date',
         className: 'input',
-        value: task.deadline,
+        value: task.deadline.split('T')[0],
         onChange: (e) => setTask({...task,deadline:e.target.value}),
       })
     ),
+    React.createElement('div',{className:'row'},
+      React.createElement('label', { className: 'label' }, 'TODO Checklist'),
+    React.createElement('ul', { className: 'todo-list' },
+      task.Checklist.map((todoItem, index) =>
+        React.createElement('li', { key: index, className: 'todo-item' },
+          React.createElement('span', null, `${String(index + 1).padStart(2, '0')} ${todoItem}`),
+        )
+      )
+    )),
+    // React.createElement('label', { className: 'label' }, 'TODO Checklist'),
+    // React.createElement('ul', { className: 'todo-list' },
+    //   task.Checklist.map((todoItem, index) =>
+    //     React.createElement('li', { key: index, className: 'todo-item' },
+    //       React.createElement('span', null, `${String(index + 1).padStart(2, '0')} ${todoItem}`),
+    //       React.createElement('button', { className: 'delete-small-btn', onClick: () => handleDeleteTodo(index) }, '🗑️')
+    //     )
+    //   )
+    // ),
+    // React.createElement('div', { className: 'todo-section' },
+    //   React.createElement('input', {
+    //     type: 'text',
+    //     className: 'input',
+    //     placeholder: 'Enter Task',
+    //     value: newTodo,
+    //     onChange: (e) => setNewTodo(e.target.value),
+    //   }),
+    //   React.createElement('button', { className: 'add-btn', onClick: handleAddTodo }, '+ Add')
+    // ),
 
-  //   // React.createElement('label', { className: 'label' }, 'TODO Checklist'),
-  //   // React.createElement('ul', { className: 'todo-list' },
-  //   //   todos.map((todoItem, index) =>
-  //   //     React.createElement('li', { key: index, className: 'todo-item' },
-  //   //       React.createElement('span', null, `${String(index + 1).padStart(2, '0')} ${todoItem}`),
-  //   //       React.createElement('button', { className: 'delete-small-btn', onClick: () => handleDeleteTodo(index) }, '🗑️')
-  //   //     )
-  //   //   )
-  //   // ),
-  //   // React.createElement('div', { className: 'todo-section' },
-  //   //   React.createElement('input', {
-  //   //     type: 'text',
-  //   //     className: 'input',
-  //   //     placeholder: 'Enter Task',
-  //   //     value: newTodo,
-  //   //     onChange: (e) => setNewTodo(e.target.value),
-  //   //   }),
-  //   //   React.createElement('button', { className: 'add-btn', onClick: handleAddTodo }, '+ Add')
-  //   // ),
-
-  //   // React.createElement('label', { className: 'label' }, 'Add Attachments'),
-  //   // React.createElement('ul', { className: 'attachment-list' },
-  //   //   attachments.map((link, index) =>
-  //   //     React.createElement('li', { key: index, className: 'attachment-item' },
-  //   //       React.createElement('span', null, link),
-  //   //       React.createElement('button', { className: 'delete-small-btn', onClick: () => handleDeleteAttachment(index) }, '🗑️')
-  //   //     )
-  //   //   )
-  //   // ),
-  //   // React.createElement('div', { className: 'todo-section' },
-  //   //   React.createElement('input', {
-  //   //     type: 'text',
-  //   //     className: 'input',
-  //   //     placeholder: 'Add File Link',
-  //   //     value: newAttachment,
-  //   //     onChange: (e) => setNewAttachment(e.target.value),
-  //   //   }),
-  //   //   React.createElement('button', { className: 'add-btn', onClick: handleAddAttachment }, '+ Add')
-  //   // ),
+    // React.createElement('label', { className: 'label' }, 'Add Attachments'),
+    // React.createElement('ul', { className: 'attachment-list' },
+    //   attachments.map((link, index) =>
+    //     React.createElement('li', { key: index, className: 'attachment-item' },
+    //       React.createElement('span', null, link),
+    //       React.createElement('button', { className: 'delete-small-btn', onClick: () => handleDeleteAttachment(index) }, '🗑️')
+    //     )
+    //   )
+    // ),
+    // React.createElement('div', { className: 'todo-section' },
+    //   React.createElement('input', {
+    //     type: 'text',
+    //     className: 'input',
+    //     placeholder: 'Add File Link',
+    //     value: newAttachment,
+    //     onChange: (e) => setNewAttachment(e.target.value),
+    //   }),
+    //   React.createElement('button', { className: 'add-btn', onClick: handleAddAttachment }, '+ Add')
+    // ),
 
     React.createElement('button', { className: 'update-task-btn', onClick: handleUpdate }, 'UPDATE TASK')
    );

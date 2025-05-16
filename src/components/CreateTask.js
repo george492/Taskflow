@@ -8,15 +8,14 @@ import { useNavigate } from 'react-router-dom';
 
 function CreateTask() {
   const [Cuser, setCuser] = useRecoilState(CUser);
-  const [token] = useRecoilState(User_Token);
+  const [token,setttoken]=useRecoilState(User_Token);
   const navigate = useNavigate();
   const temp = new Date();
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const dayName = days[temp.getDay()];
   const date = temp.getFullYear() + '-' + String(temp.getMonth() + 1).padStart(2, '0') + '-' + String(temp.getDate()).padStart(2, '0');
 
-  // console.log("Current user:", Cuser);
-  // console.log("Token:", token);
+
 
   const Addtask_DB = async () => {
     try {
@@ -38,20 +37,19 @@ function CreateTask() {
         'In Progress': 'in Progress',
         'Completed': 'Completed'
       };
-
+      const assignedUsersArray = assignedUsers.split(',').map(user => user.trim());
       const taskdata = {
         title: taskTitle.trim(),
         description: description.trim(),
-        startDate: date,
         deadline: dueDate || null,
-        assignee: assignedUsers.trim() || null,  // Make it optional
+        assignee: assignedUsersArray || null,  // Make it optional
         status: statusMap[T_status] || 'pending',
         priority: priority,
-        totalTasks: totalTasks
-        // createdBy: Cuser._id
+        startDate: date,
+        totalTasks: todos.length,
+        Checklist: todos,
       };
 
-      console.log('Sending task data:', taskdata);
 
       const response = await axios.post(
         'http://localhost:5000/api/tasks',
@@ -64,7 +62,6 @@ function CreateTask() {
         }
       );
       
-      console.log('Task created:', response.data);
       alert('Task created successfully!');
       navigate('/task/all');
     } catch (error) {
@@ -78,13 +75,30 @@ function CreateTask() {
       }
     }
   };
+  const [todos, setTodos] = useState([]);
+  // const [attachments, setAttachments] = useState([]);
+  const [newTodo, setNewTodo] = useState('');
+  const [newAttachment, setNewAttachment] = useState('');
 
+  function handleAddTodo() {
+    if (newTodo.trim() !== '') {
+      setTodos([...todos, newTodo]);
+      setNewTodo('');
+    }
+  }
+
+  function handleDeleteTodo(index) {
+    const updatedTodos = [...todos];
+    updatedTodos.splice(index, 1);
+    setTodos(updatedTodos);
+  }
   const [taskTitle, setTaskTitle] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState('Medium');
   const [T_status, setStatus] = useState('Pending');
   const [dueDate, setDueDate] = useState('');
   const [assignedUsers, setAssignedUsers] = useState('');
+  const [assignedUsersArray, setAssignedUsersArray] = useState([]);
   const [totalTasks, setTotalTasks] = useState(0);
   return React.createElement(
     'div',
@@ -138,26 +152,38 @@ function CreateTask() {
       value: dueDate,
       onChange: (e) => setDueDate(e.target.value),
     }),
-    React.createElement('label', { className: 'label' }, 'Total Tasks'),
-    React.createElement('input', {
-      type: 'number',
-      className: 'input',
-      value: totalTasks,
-      onChange: (e) => setTotalTasks(e.target.value),
-    }),
+   
 
     React.createElement('label', { className: 'label' }, 'Assign To'),
     React.createElement('div', { className: 'assign-section' },
       React.createElement('input', {
         className: 'input',
         type: 'text',
-        placeholder: 'Separate between Names by ,',
+        placeholder: 'Separate between IDs by ,',
         value: assignedUsers,
         onChange: (e) => setAssignedUsers(e.target.value)
       }),
       // React.createElement('button', { className: 'assign-btn' }, '+1')
     ),
-    
+    React.createElement('label', { className: 'label' }, 'TODO Checklist'),
+    React.createElement('ul', { className: 'todo-list' },
+      todos.map((todoItem, index) =>
+        React.createElement('li', { key: index, className: 'todo-item' },
+          React.createElement('span', null, `${String(index + 1).padStart(2, '0')} ${todoItem}`),
+          React.createElement('button', { className: 'delete-small-btn', onClick: () => handleDeleteTodo(index) }, '🗑️')
+        )
+      )
+    ),
+    React.createElement('div', { className: 'todo-section' },
+      React.createElement('input', {
+        type: 'text',
+        className: 'input',
+        placeholder: 'Enter Task',
+        value: newTodo,
+        onChange: (e) => setNewTodo(e.target.value),
+      }),
+      React.createElement('button', { className: 'add-btn', onClick: handleAddTodo }, '+ Add')
+    ),
     React.createElement('button', { 
       className: 'create-task-btn',
       onClick: Addtask_DB 

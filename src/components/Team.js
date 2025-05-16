@@ -4,79 +4,94 @@ import Teammember from "./Teammemeber";
 import { useRecoilState } from "recoil";
 import User_Token from "./Tokaerecoil";
 
+import  All__Tasks  from "./TasksRecoil";
 function Team() {
-  const [users, setUsers] = useState([]);
-  const [tasks, setTasks] = useState([]);
- // const token = localStorage.getItem("token");
+  const [usersArray, setUsersArray] = useState([]);
+  const[tasks,setTasks]=useRecoilState(All__Tasks); 
+  const[flag,setflag]=useState(false);
+  const [fetch,setfetch]=useState(false);
   const [token,setttoken]=useRecoilState(User_Token);
-  
-  useEffect(() => {
+  const [stat,set_stat]=useState('');
+  const [inProgress,set_inProgress]=useState(0);
+  const [complete,set_complete]=useState(0);
+  const [pending,set_pending]=useState(0);
+  let Team_members=[]
+  const [Team_membersA, set_Team_membersA] = useState([]);
   const fetchUsers = async () => {
     try {
-      // console.log("Welcome to the dashboard");
       const response = await axios .get("http://localhost:5000/api/auth/users");
 
-      setUsers(response.data)
-      console.log("Users fetched:", response.data);
+      setUsersArray(response.data)
       
-      console.log("Users fetched 2:", users);
     } catch (error) {
       console.error('Failed to fetch Users:', error);
-      setUsers([]);
+      setUsersArray([]);
     }
   };
-
-}, [ ]);
+  useEffect(() => {
+ fetchUsers();
+}, []);
+useEffect(() => {
+  if(usersArray.length>0&&!flag && tasks.length>0)
+  {
+    setflag(true);
+    get_team_members(usersArray);
+   
+  }
   
-    // Count tasks by assignee
-  const assigneeStats = {};
+}, [usersArray,tasks]);
+ 
+function getUsers(t, usersA) {
+  if (!t.assignee) return [];
 
-  tasks.forEach((task) => {
-    const assigneeId = task.assignee?._id || task.assignee;
-    if (!assigneeId) return;
+  return t.assignee.map((u) => {
+    const user = usersA.find((us) => us._id === u._id);
+    if (!user) return null;
 
-    if (!assigneeStats[assigneeId]) {
-      assigneeStats[assigneeId] = {
-        _id: assigneeId,
-        pending: 0,
-        inProgress: 0,
-        done: 0,
-      };
-    }
-
-    switch (task.status) {
-      case "To Do":
-        assigneeStats[assigneeId].pending++;
-        break;
-      case "In Progress":
-        assigneeStats[assigneeId].inProgress++;
-        break;
-      case "Done":
-        assigneeStats[assigneeId].done++;
-        break;
-      default:
-        break;
-    }
-  });
-
-  // Merge user info into stats
-  const teamData = Object.values(assigneeStats).map((stat) => {
-    const user = users.find((u) => u._id === stat._id) || {};
-    return {
-      ...stat,
-      name: user.name || "Unknown",
-      email: user.email || "Unknown",
-      profileImage: user.profileImage || "",
+    const currentStats = {
+      pending: 0,
+      complete: 0,
+      inprogress: 0,
     };
-  });
+
+    return {
+      name: user.name,
+      id: user._id,
+      pending: currentStats.pending + (t.status === 'pending' ? 1 : 0),
+      complete: currentStats.complete + (t.status === 'Completed' ? 1 : 0),
+      inprogress: currentStats.inprogress + (t.status === 'in Progress' ? 1 : 0),
+      email: user.email,
+      profileImage: user.profileImage || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+    };
+  }).filter(Boolean); // Remove null entries
+}
+
+function get_team_members(users) {
+  const updatedMembers = tasks.flatMap((t) => getUsers(t, users));
+
+  // Merge duplicates and sum counts
+  const mergedMembers = updatedMembers.reduce((acc, member) => {
+    const existing = acc.find((m) => m.id === member.id);
+    if (existing) {
+      existing.pending += member.pending;
+      existing.complete += member.complete;
+      existing.inprogress += member.inprogress;
+    } else {
+      acc.push({ ...member }); // Clone to avoid mutation
+    }
+    return acc;
+  }, []);
+
+  set_Team_membersA(mergedMembers);
+}
 
   return (
     <div className="TEAm">
       <h1>Team Members</h1>
       <div className="team">
-        {teamData.map((m) => (
-          <Teammember key={m._id} m={m} />
-        ))}
+      {Team_membersA&&Team_membersA.map((m) => {
+  return <Teammember key={m._id} m={m} />;
+})}
       </div>
     </div>
   );

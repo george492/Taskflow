@@ -20,7 +20,7 @@ const getTasks = async (req, res) => {
       filter.status = req.query.status;
     }
 
-    const tasks = await Task.find(filter).populate('createdBy', 'name').populate('assignee', 'name');
+    const tasks = await Task.find(filter).populate('Checklist').populate('createdBy', 'name').populate('assignee', 'name');
     res.json(tasks);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching tasks' });
@@ -33,7 +33,7 @@ const createTask = async (req, res) => {
     console.log('Received task data:', req.body);
     console.log('User from auth middleware:', req.user);
 
-    const { title, description, deadline, assignee, status, priority, startDate, totalTasks } = req.body;
+    const { title, description, deadline, assignee, status, priority, startDate, totalTasks ,Checklist} = req.body;
 
     // Validate required fields
     if (!title) {
@@ -50,6 +50,7 @@ const createTask = async (req, res) => {
       status: status || 'pending',
       priority: priority || 'Medium',
       totalTasks,
+      Checklist,
       createdBy: req.user._id  // Use the authenticated user's ID
     });
 

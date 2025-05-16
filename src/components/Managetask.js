@@ -1,30 +1,56 @@
 import { NavLink, useParams } from 'react-router-dom';
 import './Managetask.css'
-import AllTasks from './AllTasks';
+
 import { useEffect, useState } from 'react';
-import TaskData from '../Taskdata';
-import All__Tasks from './TasksRecoil';
 import { useRecoilState } from 'recoil';
+import User_Token from './Tokaerecoil';
+import CUser from '../UserRecoil';
+import axios from 'axios';
+import All__Tasks from './TasksRecoil';
+import AllTasks from './AllTasks';
 function Managetask()
 {
-  const[tasks,setTasks]=useRecoilState(All__Tasks);
-    const param=useParams();
-    const [Tasks,settasks]=useState([]);
-    const[pending,setpending]=useState(0);
-    const[progress,setprogress]=useState(0);
-    const[completed,setcompleted]=useState(0);
-    const[all,setall]=useState(0);
+  const[tasks,settasks]=useRecoilState(All__Tasks);
+  const param=useParams();
+  // const [Tasks,settasks]=useState([]);
+  const[pending,setpending]=useState(0);
+  const[progress,setprogress]=useState(0);
+  const[completed,setcompleted]=useState(0);
+  const[all,setall]=useState(0);
+  const[token,setToken]=useRecoilState(User_Token);
+  const[Cuser,setCuser]=useRecoilState(CUser);
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/tasks', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        settasks(response.data);
+      
+      } catch (error) {
+        console.error('Failed to fetch tasks:', error);
+        settasks([]);
+      }
+    };
+
+    if (Cuser && token) {
+      fetchTasks();
+    }
+  }, []);
+
     useEffect(()=>
     {
         
            setall(tasks.length);
               const  Taskat=tasks.filter(p=>p.status==='Completed');
               setcompleted(Taskat.length);
-              const  Taskat1=tasks.filter(p=>p.status==='Pending');
+              const  Taskat1=tasks.filter(p=>p.status==='pending');
               setpending(Taskat1.length);
-              const  Taskat2=tasks.filter(p=>p.status==='In Progress');
+              const  Taskat2=tasks.filter(p=>p.status==='in Progress');
               setprogress(Taskat2.length);
-    },[ ])
+    },[ tasks])
     return(
         <div className="managetask">
             <header>
@@ -38,11 +64,11 @@ function Managetask()
       <div className="navbar-nav task_info">
         <NavLink to='/task/all' className={({ isActive }) => (isActive ? 'Active nav-link active' : 'nav-link active')}  aria-current="page" href="#">  <p>All</p>
         <span>{all}</span></NavLink>
-        < NavLink to='/task/Pending'  className={({ isActive }) => (isActive ? 'Active nav-link' : 'nav-link')}  href="#"><p>pending</p>
+        < NavLink to='/task/pending'  className={({ isActive }) => (isActive ? 'Active nav-link' : 'nav-link')}  href="#"><p>pending</p>
         <span>{pending}</span></NavLink>
-        <NavLink to='/task/In Progress'  className={({ isActive }) => (isActive ? 'Active nav-link' : 'nav-link')} ><p>in progress</p>
+        <NavLink to='/task/in Progress'  className={({ isActive }) => (isActive ? 'Active nav-link' : 'nav-link')} ><p>in progress</p>
         <span>{progress}</span></NavLink>
-        <NavLink to='/task/Completed'  className={({ isActive }) => (isActive ? 'Active nav-link' : 'nav-link')} ><p>in progress</p>
+        <NavLink to='/task/Completed'  className={({ isActive }) => (isActive ? 'Active nav-link' : 'nav-link')} ><p>Completed</p>
         <span>{completed}</span></NavLink>
        
       </div>
