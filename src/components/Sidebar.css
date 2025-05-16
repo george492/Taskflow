@@ -1,0 +1,135 @@
+.side_bar
+{
+    padding: 10px 0;
+    /* background-color: #ddd; */
+
+}
+.side_bar .img
+{
+    display: flex;
+    /* justify-content: center; */
+    align-items: center;
+    margin-top: 50px;
+    margin-left: 40px;
+
+}
+.side_bar .img img
+{
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: contain;
+}
+.side_bar .name 
+{
+    /* text-align: center; */
+    font-weight: 600;
+    font-family: cursive;
+    text-transform: capitalize;
+    margin-bottom: 5px !important;
+    margin-left: 30px;
+}
+.side_bar .email
+{
+    color: #8f8f94;
+    /* text-align: center; */
+    font-family: cursive;
+    text-transform: capitalize;
+    text-wrap: wrap;
+    margin-left: 10px;
+    /* width: 80%; */
+    /* margin-top: 5px !important; */
+}
+.side_bar ul
+{
+    /* text-align: center; */
+    list-style: none;
+    width: 100%;
+    padding: 0 !important;
+}
+.side_bar ul .active
+{
+    background-color: #ecf4fe;
+    color:#2196f3;
+    width: 100%;
+}
+.side_bar ul li{
+    margin-bottom: 20px;
+    width: 100%;
+    /* background-color: black; */
+    text-align: center;
+}
+.side_bar ul li a
+{
+    display: flex;
+    width: 100%;
+    padding: 10px 15px;
+    align-items: center;
+    text-decoration: none;
+    color: black;
+    
+}
+.side_bar ul li a span
+{
+    font-family: cursive;
+    font-weight: 600;
+    margin-left: 10px;
+    text-transform: capitalize;
+}
+.home
+{
+    display: grid;
+    grid-template-columns: 22% 77%;
+
+}
+@media(max-width:769px)
+{
+    .side_bar ul li
+    {
+        margin-bottom: 0px;
+    }
+    .bars_icon
+    {
+        display: block !important;
+    }
+    .home{
+        grid-template-columns: 97%;
+        /* justify-content: center; */
+    }
+    .cont
+{
+    background-color: transparent;
+    margin-left: 10px;
+}
+    .side_bar
+{
+    position: fixed;
+    width: 60%;
+    display: none;
+    left: 0;
+        z-index: 3;
+        background-color: #f2f2f2;
+}
+}
+.bars_icon
+{
+    display: none;
+}
+.cont .bars_icon i
+{
+    font-size: 20px;
+}
+
+.appear
+{
+    display: block;
+}
+@media(max-width:425px)
+{
+    .side_bar
+    {
+        
+        width: 80%;
+       
+    }
+}
