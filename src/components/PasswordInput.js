@@ -6,7 +6,7 @@ const PasswordInput = ({ value, onChange, placeholder = "Password", name = "pass
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div style={{ position: "relative", width: "100%", marginRight: "20px" }}>
+    <div style={{ position: "relative", width: "100%", }}>
       <input
         type={showPassword ? "text" : "password"}
         name={name}
@@ -15,7 +15,7 @@ const PasswordInput = ({ value, onChange, placeholder = "Password", name = "pass
         onChange={onChange}
         required
         className="profile-input"
-        
+
       />
       <span
         onClick={() => setShowPassword(!showPassword)}
@@ -26,7 +26,7 @@ const PasswordInput = ({ value, onChange, placeholder = "Password", name = "pass
           transform: "translateY(-50%)",
           cursor: "pointer",
           color: "#888",
-         
+
         }}
       >
         {showPassword ? <FaEye /> : <FaEyeSlash />}

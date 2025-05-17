@@ -88,8 +88,56 @@ const getAllUsers = async (req, res) => {
     }
 };
 
+const updateUser = async (req, res) => {
+    try {
+        const { name, email, profileImage } = req.body;
+        const userId = req.user._id; // Get user ID from auth middleware
+
+        // Validate input
+        if (!name && !email && !profileImage) {
+            return res.status(400).json({ message: "No update data provided" });
+        }
+
+        // Check if email is being updated and if it's already taken
+        if (email) {
+            const existingUser = await User.findOne({ email, _id: { $ne: userId } });
+            if (existingUser) {
+                return res.status(400).json({ message: "Email already in use" });
+            }
+        }
+
+        // Update user data
+        const updateData = {};
+        if (name) updateData.name = name;
+        if (email) updateData.email = email;
+        if (profileImage) updateData.profileImage = profileImage;
+
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { $set: updateData },
+            { new: true, runValidators: true }
+        ).select('-password');
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json({
+            message: "User updated successfully",
+            user: updatedUser
+        });
+    } catch (error) {
+        console.error("Error updating user:", error);
+        res.status(500).json({ 
+            message: "Error updating user",
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+};
+
 module.exports = {
   register,
   login,
-  getAllUsers
+  getAllUsers,
+  updateUser
 };

@@ -19,6 +19,19 @@ const swaggerOptions = {
       version: '1.0.0',
       description: 'API documentation for Taskflow project',
     },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'Enter your JWT token in the format: Bearer <token>'
+        }
+      }
+    },
+    security: [{
+      bearerAuth: []
+    }],
     servers: [
       {
         url: `http://localhost:${process.env.PORT || 5000}`,
@@ -26,20 +39,33 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ['./src/Backend/routes/*.js'], 
+  apis: ['./src/Backend/routes/*.js'],
 };
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs, {
+  swaggerOptions: {
+    persistAuthorization: true,
+    docExpansion: 'none',
+    filter: true,
+    showCommonExtensions: true,
+    syntaxHighlight: {
+      activate: true,
+      theme: 'monokai'
+    }
+  },
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: "Taskflow API Documentation"
+}));
 
 app.use(express.json());
 
 app.use(
-    cors({
+  cors({
     origin: process.env.CLIENT_URL || "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    })
+  })
 );
 
 mongoose.connect(process.env.MONGO_URI, {

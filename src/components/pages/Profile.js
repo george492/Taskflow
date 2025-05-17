@@ -5,13 +5,12 @@ import "../Profile.css";
 import { useNavigate } from "react-router-dom";
 import CUser from "../../UserRecoil";
 import { useRecoilState } from "recoil";
-
-
+import axios from "axios";
 const Profile = () => {
   const [user, setUser] = useRecoilState(CUser);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [profileImage, setProfileImage] = useState(null);
+  const [profileImage, setProfileImage] = useState("");
   const [editMode, setEditMode] = useState(false);
 
   const [currentPassword, setCurrentPassword] = useState("");
@@ -32,27 +31,31 @@ const Profile = () => {
 };
 
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    if (!currentPassword) {
-      alert("Please enter your current password to save changes.");
-      return;
-    }
+    try {
+      const updatedUser = {
+        name: name || user.name,
+        email: email || user.email,
+        profileImage: profileImage || user.profileImage
+      };
 
-    setIsSaving(true);
-    setSaveSuccess(false);
+      const token = localStorage.getItem('token');
+      const response = await axios.put('http://localhost:5000/api/auth/profile', updatedUser, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
 
-    setTimeout(() => {
-      setIsSaving(false);
+      // Update the user state with the new data
+      setUser(response.data.user);
       setSaveSuccess(true);
-
-      setTimeout(() => {
-        setSaveSuccess(false);
-        setEditMode(false);
-        navigate("/profile");
-      }, 1000);
-
-    }, 1500);
+      setEditMode(false);
+    } catch (error) {
+      alert(error.response?.data?.message || 'Failed to update profile');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -68,7 +71,7 @@ const Profile = () => {
           <div className="profile-box">
             <div className="profile-box">
               <img
-                src={user.profileImage || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"}
+                src={user.profileImage || "https://via.placeholder.com/120x120"}
                 alt="Profile Picture"
                 className="profile-image"
                 onClick={() => {
@@ -79,11 +82,11 @@ const Profile = () => {
               />{ }
 
               <input
-                type="file"
-                accept="image/*"
-                ref={inputRef}
-                onChange={handleImageChange}
-                style={{ display: "none" }}
+                type="text"
+                value={user.profileImage}
+                disabled={!editMode}
+                onChange={(e) => setUser({...user,profileImage:e.target.value})}
+                
               />
             </div>
             <div className="profile-info">
@@ -92,7 +95,7 @@ const Profile = () => {
                 type="text"
                 value={user.name}
                 disabled={!editMode}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => setUser({...user,name:e.target.value})}
                 className="profile-input"
               />
 
@@ -101,17 +104,27 @@ const Profile = () => {
                 type="email"
                 value={user.email}
                 disabled={!editMode}
-                onChange={(e) => setEmail(e.target.value)}
+              //  onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setUser({...user,email:e.target.value})}
+              
                 className="profile-input"
               />
-        <label>ID</label>
-              <input
+  <label>ID</label>
+                <input
                 type="text"
                 value={user._id}
                 disabled={!editMode}
                
                 className="profile-input"
               />
+              
+              {editMode ? (
+                <button
+                  type="submit" onClick={handleSave} disabled={isSaving} className="profile-btn">
+                  {isSaving ? "Saving..." : saveSuccess ? "Save " : "Save Changes"}
+                </button>
+              ) : (<button onClick={() => setEditMode(true)} className="profile-btn">Edit Profile</button>)}
+
             </div>
           </div>
         </div>}

@@ -6,7 +6,6 @@ const {
   deleteTask,
   rateTask
 } = require('../controllers/taskController');
-const auth = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
@@ -65,7 +64,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.get('/', auth, getTasks);
+router.get('/', getTasks);
 
 /**
  * @swagger
@@ -114,7 +113,7 @@ router.get('/', auth, getTasks);
  *       500:
  *         description: Server error
  */
-router.post('/', auth, createTask);
+router.post('/', createTask);
 
 /**
  * @swagger
@@ -154,7 +153,7 @@ router.post('/', auth, createTask);
  *       500:
  *         description: Server error
  */
-router.post('/:id/rate', auth, rateTask);
+router.post('/:id/rate', rateTask);
 
 /**
  * @swagger
@@ -210,7 +209,7 @@ router.post('/:id/rate', auth, rateTask);
  *       500:
  *         description: Server error
  */
-router.put('/:id', auth, updateTask);
+router.put('/:id',  updateTask);
 
 /**
  * @swagger
@@ -237,6 +236,6 @@ router.put('/:id', auth, updateTask);
  *       500:
  *         description: Server error
  */
-router.delete('/:id', auth, deleteTask);
+router.delete('/:id',  deleteTask);
 
 module.exports = router;

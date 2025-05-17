@@ -33,11 +33,20 @@ const createTask = async (req, res) => {
     console.log('Received task data:', req.body);
     console.log('User from auth middleware:', req.user);
 
-    const { title, description, deadline, assignee, status, priority, startDate, totalTasks ,Checklist} = req.body;
+    const { title, description, deadline, assignee, status, priority, startDate, totalTasks, Checklist } = req.body;
 
     // Validate required fields
     if (!title) {
       return res.status(400).json({ message: 'Title is required' });
+    }
+
+    // Process assignee field
+    let processedAssignee = [];
+    if (assignee && Array.isArray(assignee)) {
+      // Filter out empty strings and ensure all values are valid ObjectIds
+      processedAssignee = assignee
+        .filter(id => id && id.trim() !== '')
+        .map(id => id.trim());
     }
 
     // Create task with authenticated user as creator
@@ -46,12 +55,12 @@ const createTask = async (req, res) => {
       description,
       startDate,
       deadline,
-      assignee,
+      assignee: processedAssignee.length > 0 ? processedAssignee : undefined, // Only set if there are valid assignees
       status: status || 'pending',
       priority: priority || 'Medium',
-      totalTasks,
-      Checklist,
-      createdBy: req.user._id  // Use the authenticated user's ID
+      totalTasks: totalTasks || 0,
+      Checklist: Array.isArray(Checklist) ? Checklist : [], // Ensure Checklist is an array
+      createdBy: req.user._id
     });
 
     console.log('Task to be saved:', task);
@@ -66,7 +75,8 @@ const createTask = async (req, res) => {
     console.error('Error creating task:', err);
     res.status(500).json({ 
       message: 'Error creating task',
-      error: process.env.NODE_ENV === 'development' ? err.message : undefined
+      error: process.env.NODE_ENV === 'development' ? err.message : undefined,
+      details: process.env.NODE_ENV === 'development' ? err.stack : undefined
     });
   }
 };

@@ -1,5 +1,6 @@
 const express = require('express');
-const { register, login, getAllUsers } = require('../controllers/authController');
+const { register, login, getAllUsers, updateUser } = require('../controllers/authController');
+const authMiddleware = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 
@@ -104,5 +105,67 @@ router.post('/login', login);
  *         description: Server error
  */
 router.get('/users', getAllUsers);
+
+/**
+ * @swagger
+ * /api/auth/profile:
+ *   put:
+ *     summary: Update user profile
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: User's full name
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: User's email address
+ *               profileImage:
+ *                 type: string
+ *                 description: URL to user's profile image
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User updated successfully
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     profileImage:
+ *                       type: string
+ *                     rating:
+ *                       type: number
+ *                     numOfRatings:
+ *                       type: number
+ *       400:
+ *         description: Invalid input or email already in use
+ *       401:
+ *         description: Unauthorized - No token provided
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
+router.put('/profile', authMiddleware, updateUser);
 
 module.exports = router;

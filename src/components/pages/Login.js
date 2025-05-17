@@ -8,100 +8,108 @@ import User_Token from "../Tokaerecoil";
 import { useRecoilState } from "recoil";
 import axios from "axios";
 import Alert from '@mui/material/Alert';
-// 
-// import { Alert } from "bootstrap";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
+
+// Validation schema using Yup
+const LoginSchema = Yup.object().shape({
+  email: Yup.string().email("Invalid email").required("Required"),
+  password: Yup.string().min(4, "Too Short!").required("Required"),
+});
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, seterror] = useState(null);
   const [user, setUser] = useRecoilState(CUser);
   const [token, setToken] = useRecoilState(User_Token);
-  const[errorlogin, setErrorlogin] = useState(false);
-  const[count, setCount] = useState(0);
-  const handleLogin = async (e) => {
-    e.preventDefault();
-  
+  const [errorlogin, setErrorlogin] = useState(false);
+  const [count, setCount] = useState(0);
+  const navigate = useNavigate();
+
+  const handleLogin = async (values, { setSubmitting }) => {
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', {
-        email,
-        password: password
+      const res = await axios.post("http://localhost:5000/api/auth/login", {
+        email: values.email,
+        password: values.password,
       });
 
       const { token, ...userData } = res.data;
       setToken(token);
       setUser(userData);
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(userData));
-  
-    
-      navigate('/dashboard'); 
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      navigate("/dashboard");
     } catch (err) {
-      // console.log("no no",res.data);
-      // console.error("no no",err.response.data);
       setErrorlogin(true);
-      setCount(count + 1);
+      setCount(prev => prev + 1);
       setTimeout(() => {
         setErrorlogin(false);
       }, 3000);
-      return;
-      // alert('Login failed');
+    } finally {
+      setSubmitting(false);
     }
   };
-  const navigate = useNavigate();
-  const handleRegister = (e) => {
-    e.preventDefault();
-    navigate("/profile");
-  };
-useEffect(() => {
-  if(count >=3){
-    setErrorlogin(false);
-    setCount(0);
-    navigate("/register");
-  }
-}, [count]);
+
+  useEffect(() => {
+    if (count >= 3) {
+      setErrorlogin(false);
+      setCount(0);
+      navigate("/register");
+    }
+  }, [count, navigate]);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.9 }}
     >
-      {
-        <div className="pape-container">
-          
-
+      <div className="pape-container">
         <div className="profile-box">
           <h2>Welcome Back!</h2>
           <p>Please enter your data to log in</p>
-          <form onSubmit={handleLogin} className="profile-info">
-            <input
-              type="text"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="profile-input"
-            />
+          <Formik
+            initialValues={{ email: "", password: "" }}
+            validationSchema={LoginSchema}
+            onSubmit={handleLogin}
+          >
+            {({ isSubmitting, errors, touched }) => (
+              <Form className="profile-info">
+                <Field
+                  type="text"
+                  name="email"
+                  placeholder="Email"
+                  className="profile-input"
+                />
+                {errors.email && touched.email && (
+                  <div className="input-error">{errors.email}</div>
+                )}
 
-            <PasswordInput
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-            />
+                <Field name="password">
+                  {({ field }) => (
+                    <PasswordInput
+                      {...field}
+                      placeholder="Password"
+                    />
+                  )}
+                </Field>
+                {errors.password && touched.password && (
+                  <div className="input-error">{errors.password}</div>
+                )}
 
+                <button type="submit" className="profile-btn" disabled={isSubmitting}>
+                  Login
+                </button>
 
-            <button type="submit" className="profile-btn">Login</button>
+                <p>Don't have an account yet? <Link to="/register">Register</Link></p>
+              </Form>
+            )}
+          </Formik>
 
-            <p>Don't have an account yet? <Link to="/register">Register</Link></p>
-
-          </form>
           <div className={errorlogin ? "error-login" : "error-login-hidden"}>
             <Alert severity="error">Invalid email or password</Alert>
           </div>
-          </div>
         </div>
-      }</motion.div>
+      </div>
+    </motion.div>
   );
 }
-
-

@@ -3,10 +3,11 @@ import axios from "axios";
 import Teammember from "./Teammemeber";
 import { useRecoilState } from "recoil";
 import User_Token from "./Tokaerecoil";
-
+import CUser from '../UserRecoil';
 import  All__Tasks  from "./TasksRecoil";
 function Team() {
   const [usersArray, setUsersArray] = useState([]);
+  const[current_user,set_current_user]=useRecoilState(CUser);
   const[tasks,setTasks]=useRecoilState(All__Tasks); 
   const[flag,setflag]=useState(false);
   const [fetch,setfetch]=useState(false);
@@ -45,7 +46,7 @@ function getUsers(t, usersA) {
   if (!t.assignee) return [];
 
   return t.assignee.map((u) => {
-    const user = usersA.find((us) => us._id === u._id);
+    const user = usersA.find((us) => us._id === u._id&&us._id!==current_user._id);
     if (!user) return null;
 
     const currentStats = {
